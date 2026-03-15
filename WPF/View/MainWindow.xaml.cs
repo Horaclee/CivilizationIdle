@@ -83,15 +83,31 @@ public partial class MainWindow : Window
         }
     }
 
-    private void CollectFood_Click(object sender, RoutedEventArgs e)
+    private async void CollectFood_Click(object sender, RoutedEventArgs e)
     {
+        var button = sender as Button;
+
+        button?.IsEnabled = false;
+        
         _gameManager.GatherResource(ResourceType.Food, 1);
         UpdateUi();
+        
+        await Task.Delay(1000);
+
+        button?.IsEnabled = true;
     }
-    private void CollectWood_Click(object sender, RoutedEventArgs e)
+    private async void CollectWood_Click(object sender, RoutedEventArgs e)
     {
+        var button = sender as Button;
+
+        button?.IsEnabled = false;
+        
         _gameManager.GatherResource(ResourceType.Wood, 1);
         UpdateUi();
+        
+        await Task.Delay(1000);
+
+        button?.IsEnabled = true;
     }
     /*private void CollectStone_Click(object sender, RoutedEventArgs e)
     {
