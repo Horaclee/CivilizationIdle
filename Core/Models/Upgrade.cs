@@ -4,12 +4,10 @@ namespace Core.Models;
 
 public class Upgrade
 {
-    public string Name;
-
-    public bool IsUnlocked;
-    public bool IsPurchased;
-
-    public double Cost;
+    public string Name { get; set; }
+    public bool IsUnlocked { get; set; }
+    public bool IsPurchased { get; set; }
+    public double Cost { get; set; }
 
     public BuildingType TargetBuilding;
     

@@ -1,37 +1,14 @@
-﻿using Core.Enums;
+﻿using Core.Definitions;
+using Core.Enums;
 
 namespace Core.Models;
 
 public class Building
 {
-    public BuildingType Type;
-    public string Name;
+    public BuildingDefinition Definition { get; set; }
 
-    public int Count;
-    
-    public double BaseCost;
-    public double CostMultiplier;
+    public int Count { get; set; }
 
-    public Dictionary<ResourceType, double> Production;
-
-    public void GetCost()
-    {
-        
-    }
-
-    public void GetNextCost()
-    {
-        
-    }
-
-    public void IncreaseCount()
-    {
-        
-    }
-    
-    public void GetProduction()
-    {
-        
-    }
+    public void IncreaseCount() => Count++;
     
 }

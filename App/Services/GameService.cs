@@ -1,4 +1,4 @@
-﻿namespace Application.Services;
+﻿namespace App.Services;
 
 public class GameService
 {

@@ -1,4 +1,4 @@
-﻿namespace Application.DTO;
+﻿namespace App.DTO;
 
 public class ResourceDTO
 {
