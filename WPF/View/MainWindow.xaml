@@ -111,7 +111,7 @@
             </StackPanel>
             
             <WrapPanel x:Name="BuildingPanel" Margin="0,20,0,0" Orientation="Vertical"/>
-            
+            <WrapPanel x:Name="UpgradesPanel" Margin="0,20,0,0" Orientation="Vertical"/>
         </StackPanel>
     </Grid>
 </Window>

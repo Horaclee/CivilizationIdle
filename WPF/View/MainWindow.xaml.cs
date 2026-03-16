@@ -5,6 +5,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using App.Managers;
 using Core.Enums;
+using Core.Models;
 
 namespace WPF.View;
 
@@ -47,6 +48,12 @@ public partial class MainWindow : Window
         GoldText.Text =  $"Gold: {state.GetResources(ResourceType.Gold).ToString(CultureInfo.CurrentCulture)}";
         PopulationText.Text = $"Population: {state.GetResources(ResourceType.Population).ToString(CultureInfo.CurrentCulture)}";
         
+        AddBuildingPanel(state);
+        AddUpgradePanel(state);
+    }
+
+    private void AddBuildingPanel(GameState state)
+    {
         BuildingPanel.Children.Clear();
         foreach (var building in state.Buildings)
         {
@@ -83,6 +90,44 @@ public partial class MainWindow : Window
         }
     }
 
+    private void AddUpgradePanel(GameState state)
+    {
+        UpgradesPanel.Children.Clear();
+
+        foreach (var upgrade in state.Upgrades.Where(u => !u.IsPurchased))
+        {
+            var btn = new Button
+            {
+                Content = $"{upgrade.Definition.Name} - Costs : {GetCostText()}",
+                FontSize = 16,
+                Padding = new Thickness(10, 5, 10, 5),
+                Margin = new Thickness(5),
+                Background = Brushes.DarkGoldenrod,
+                Foreground = Brushes.White,
+                BorderBrush = Brushes.Black,
+                BorderThickness = new Thickness(2),
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                VerticalContentAlignment = VerticalAlignment.Center,
+            };
+
+            btn.Click += (s, e) =>
+            {
+                _gameManager.BuyUpgrade(state, upgrade.Definition.Id);
+                UpdateUi();
+            };
+
+            UpgradesPanel.Children.Add(btn);
+            continue;
+
+            string GetCostText()
+            {
+                return string.Join(", ",
+                    upgrade.Definition.Costs.Select(kvp => $"{kvp.Key}: {kvp.Value}")
+                );
+            }
+        }
+    }
+    
     private async void CollectFood_Click(object sender, RoutedEventArgs e)
     {
         var button = sender as Button;

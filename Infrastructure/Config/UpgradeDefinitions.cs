@@ -9,10 +9,10 @@ public static class UpgradeDefinitions
     {
         new UpgradeDefinition
         {
+            Id = 1,
             Name = "Axe",
-            IsPurchased = false,
             TargetBuilding = BuildingType.LumberMill,
-            ProductionMultiplier = 1.1,
+            ProductionMultiplier = 2,
             Costs = new Dictionary<ResourceType, double>
             {
                 {ResourceType.Wood, 10},
