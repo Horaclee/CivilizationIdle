@@ -4,10 +4,10 @@ namespace Core.Definitions;
 
 public class BuildingDefinition
 {
-    public BuildingType Type { get; set; }
-    public string Name { get; set; }
+    public required string Name { get; init; }
+    public BuildingType Type { get; init; }
     
-    public Dictionary<ResourceType, double> Costs { get; set; } = new();
-    public double CostMultiplier { get; set; }
-    public Dictionary<ResourceType, double> Production { get; set; }
+    public Dictionary<ResourceType, double> Costs { get; init; } = new();
+    public double CostMultiplier { get; init; }
+    public required Dictionary<ResourceType, double> Production { get; init; }
 }

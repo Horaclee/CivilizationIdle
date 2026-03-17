@@ -33,6 +33,8 @@ public class ProductionSystem
 
         foreach (var upgrade in state.Upgrades)
         {
+            if (!upgrade.IsPurchased) continue;
+            
             var target = upgrade.Definition.TargetBuilding;
             var multiplier = upgrade.Definition.ProductionMultiplier;
 

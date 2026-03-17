@@ -46,7 +46,6 @@ public class GameManager
     public bool BuyBuilding(BuildingType type) 
         => _buildingManager.BuyBuilding(State, type);
     
-    
     public void GatherResource(ResourceType type, double amount) 
         => _resourceManager.AddResource(State, type, amount);
 

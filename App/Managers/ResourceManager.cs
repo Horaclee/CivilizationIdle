@@ -22,6 +22,7 @@ public class ResourceManager
         var current = state.GetResources(type);
         state.SetResources(type, Math.Max(0, current - amount));
     }
+    
     public double GetResource(GameState state, ResourceType type) => state.GetResources(type);
     public bool HasEnoughResource(GameState state, ResourceType type, double amount) => state.GetResources(type) >= amount;
 }

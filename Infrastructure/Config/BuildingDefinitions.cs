@@ -5,12 +5,12 @@ namespace Infrastructure.Config;
 
 public static class BuildingDefinitions
 {
-    public static List<BuildingDefinition> All = new()
+    public static readonly List<BuildingDefinition> All = new()
     {
         new BuildingDefinition
         {
-            Type = BuildingType.Farm,
             Name = "Farm",
+            Type = BuildingType.Farm,
             Costs = new Dictionary<ResourceType, double>
             {
                 {ResourceType.Food, 10},
@@ -25,8 +25,8 @@ public static class BuildingDefinitions
 
         new BuildingDefinition
         {
-            Type = BuildingType.LumberMill,
             Name = "Lumber Mill",
+            Type = BuildingType.LumberMill,
             Costs = new Dictionary<ResourceType, double>
             {
                 {ResourceType.Food, 20},
@@ -41,8 +41,8 @@ public static class BuildingDefinitions
 
         new BuildingDefinition
         {
-            Type = BuildingType.Quarry,
             Name = "Quarry",
+            Type = BuildingType.Quarry,
             Costs = new Dictionary<ResourceType, double>
             {
                 {ResourceType.Food, 50}, 
@@ -57,8 +57,8 @@ public static class BuildingDefinitions
         
         new BuildingDefinition
         {
-            Type = BuildingType.Market,
             Name = "Quarry",
+            Type = BuildingType.Market,
             Costs = new Dictionary<ResourceType, double>
             {
                 {ResourceType.Food, 150}, 
@@ -74,8 +74,8 @@ public static class BuildingDefinitions
         
         new BuildingDefinition
         {
-            Type = BuildingType.House,
             Name = "House",
+            Type = BuildingType.House,
             Costs = new Dictionary<ResourceType, double>
             {
                 {ResourceType.Food, 100}, 

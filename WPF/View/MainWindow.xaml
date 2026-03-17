@@ -3,115 +3,214 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" WindowState="Maximized">
-    <Grid Margin="10" Background="DimGray">
-        <StackPanel>
-            <Grid Margin="10,10,10,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
+        Title="CivilizationIdle" Height="450" Width="800" WindowState="Maximized" Background="DimGray">
+        <Window.Resources>
+            <!-- Style for buttons -->
+            <Style x:Key="CollectButtonStyle" TargetType="Button">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Padding" Value="10,5"/>
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <!-- Hover -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" 
+                                            Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
+                                </Trigger>
+                                <!-- Pressed -->
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="Gray"/>
+                                </Trigger>
+                                <!-- Disabled -->
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Background" Value="DarkGray"/>
+                                    <Setter Property="Foreground" Value="LightGray"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <!-- Style for buildings -->
+            <Style x:Key="BuildingButtonStyle" TargetType="Button">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Padding" Value="10,5"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Background" Value="DarkSlateGray"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <!-- Hover -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="SlateGray"/>
+                                </Trigger>
+                                <!-- Pressed -->
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="Gray"/>
+                                </Trigger>
+                                <!-- Disabled -->
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Background" Value="DarkGray"/>
+                                    <Setter Property="Foreground" Value="LightGray"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
-                <TextBlock Text="Food: " x:Name="FoodText" Grid.Column="0" 
-                           HorizontalAlignment="Stretch" TextAlignment="Left" FontSize="20"/>
-                <TextBlock Text="Wood: " x:Name="WoodText" Grid.Column="1" 
-                           HorizontalAlignment="Stretch" TextAlignment="Left" FontSize="20"/>
-                <TextBlock Text="Stone: " x:Name="StoneText" Grid.Column="2" 
-                           HorizontalAlignment="Stretch" TextAlignment="Left" FontSize="20"/>
-                <TextBlock Text="Gold: " x:Name="GoldText" Grid.Column="3" 
-                           HorizontalAlignment="Stretch" TextAlignment="Left" FontSize="20"/>
-                <TextBlock Text="Population: " x:Name="PopulationText" Grid.Column="4" 
-                           HorizontalAlignment="Stretch" TextAlignment="Left" FontSize="20"/>
-            </Grid>
+            <!-- Style for upgrades -->
+            <Style x:Key="UpgradeButtonStyle" TargetType="Button">
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="Padding" Value="10,5"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Background" Value="DarkGoldenrod"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <!-- Hover -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="Goldenrod"/>
+                                </Trigger>
+                                <!-- Pressed -->
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="DarkGoldenrod"/>
+                                </Trigger>
+                                <!-- Disabled -->
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Background" Value="DarkGray"/>
+                                    <Setter Property="Foreground" Value="LightGray"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Window.Resources>
+    
+
+    
+    
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
             
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                <Button Content="Collect Food" Click="CollectFood_Click" Margin="5"
-                        Padding="10,5"
-                        FontSize="16"
-                        Background="DarkGreen"
-                        Foreground="White"
-                        BorderBrush="Black"
-                        BorderThickness="2"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="border"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="8"
-                                    Padding="{TemplateBinding Padding}">
-                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <!-- Hover -->
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="ForestGreen"/>
-                                </Trigger>
-                                <!-- Pressed -->
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="Green"/>
-                                </Trigger>
-                                <!-- Disabled -->
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter TargetName="border" Property="Background" Value="Gray"/>
-                                    <Setter Property="Foreground" Value="LightGray"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-                <Button Content="Collect Wood" Click="CollectWood_Click" Margin="5"
-                        Padding="10,5"
-                        FontSize="16"
-                        Background="SaddleBrown"
-                        Foreground="White"
-                        BorderBrush="Black"
-                        BorderThickness="2"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="border"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="8"
-                                    Padding="{TemplateBinding Padding}">
-                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <!-- Hover -->
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="Peru"/>
-                                </Trigger>
-                                <!-- Pressed -->
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="Sienna"/>
-                                </Trigger>
-                                <!-- Disabled -->
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter TargetName="border" Property="Background" Value="Gray"/>
-                                    <Setter Property="Foreground" Value="LightGray"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-                <!--<Button Content="Collect Stone" Click="CollectStone_Click" Margin="5"/>
+            <Border Grid.Row="0" BorderBrush="Black" BorderThickness="3" Margin="2" CornerRadius="4">
+                <Grid Margin="10,10,10,10" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Food: " x:Name="FoodText" Grid.Column="0" FontSize="20"/>
+                    <TextBlock Text="Wood: " x:Name="WoodText" Grid.Column="1" FontSize="20"/>
+                    <TextBlock Text="Stone: " x:Name="StoneText" Grid.Column="2" FontSize="20"/>
+                    <TextBlock Text="Gold: " x:Name="GoldText" Grid.Column="3" FontSize="20"/>
+                    <TextBlock Text="Population: " x:Name="PopulationText" Grid.Column="4" FontSize="20"/>
+                </Grid>
+            </Border>
+            
+            
+            <Border Grid.Row="1" BorderBrush="DarkGreen" BorderThickness="3" Margin="2" CornerRadius="4">
+                <StackPanel  Orientation="Horizontal" Margin="10">
+                    <Button Content="Collect Food" Click="CollectFood_Click" Margin="0,0,10,0"
+                            Background="DarkGreen" Tag="ForestGreen" 
+                            Style="{StaticResource CollectButtonStyle}">
+                    </Button>
+                    <Button Content="Collect Wood" Click="CollectWood_Click" Margin="0,0,10,0"
+                            Background="SaddleBrown" Tag="Peru"
+                            Style="{StaticResource CollectButtonStyle}">
+                    </Button>
+                    <!--<Button Content="Collect Stone" Click="CollectStone_Click" Margin="5"/>
                 <Button Content="Collect Gold" Click="CollectGold_Click" Margin="5"/>-->
-            </StackPanel>
+                </StackPanel>
+            </Border>
             
-            <WrapPanel x:Name="BuildingPanel" Margin="0,20,0,0" Orientation="Vertical"/>
-            <WrapPanel x:Name="UpgradesPanel" Margin="0,20,0,0" Orientation="Vertical"/>
-        </StackPanel>
+            
+            <Border Grid.Row="2" BorderBrush="Aqua" BorderThickness="3" Margin="2" CornerRadius="4">
+                <Grid  Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <WrapPanel x:Name="BuildingPanel" Grid.Column="0" Orientation="Vertical" Margin="0,0,10,0"/>
+                    <WrapPanel x:Name="UpgradesPanel" Grid.Column="1" Orientation="Vertical"/>
+                </Grid>
+            </Border>
+        </Grid>
+        
+        <Border Grid.Column="1" BorderBrush="Aquamarine" BorderThickness="3" Margin="2" CornerRadius="4">
+            <StackPanel Margin="10,0,0,0">
+                <TextBlock Text="Production / sec" FontSize="22" FontWeight="Bold" Margin="0,0,0,10"/>
+                <ItemsControl x:Name="ProductionPanel">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" FontSize="18" Margin="0,2,0,2"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+        
     </Grid>
 </Window>
+

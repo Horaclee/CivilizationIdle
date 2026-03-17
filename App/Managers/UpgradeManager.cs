@@ -5,8 +5,6 @@ namespace App.Managers;
 
 public class UpgradeManager
 {
-    public void UnlockUpgrade(GameState state, string upgradeName){}
-    
     public bool BuyUpgrade(GameState state, int upgradeId)
     {
         var upgrade = state.Upgrades.FirstOrDefault(upgrade => upgrade.Definition.Id == upgradeId);
@@ -22,8 +20,6 @@ public class UpgradeManager
         upgrade.IsPurchased = true;
         return true;
     }
-    public void ApplyUpgradeEffects(GameState state){}
-    public void GetAvailableUpgrades(GameState state){}
 
     public static void InitUpgrades(GameState state)
     {

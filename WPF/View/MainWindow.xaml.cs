@@ -14,21 +14,27 @@ namespace WPF.View;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private GameManager _gameManager;
-    private DispatcherTimer _timer;
+    private readonly GameManager _gameManager;
+    private readonly DispatcherTimer _timer;
+    private readonly GameState _gameState;
+    private readonly Dictionary<Building, Button> _buildingsButtons = new();
+    private readonly Dictionary<Upgrade, Button> _upgradeButtons = new();
     
     public MainWindow()
     {
         InitializeComponent();
         
         _gameManager = new GameManager();
+        _gameState = _gameManager.GetGameState();
         _gameManager.StartGame();
+        
+        InitBuildingPanel(_gameState);
+        InitUpgradePanel(_gameState);
 
         UpdateUi();
         
-        _timer = new DispatcherTimer();
-        _timer.Interval = TimeSpan.FromSeconds(1);
-        _timer.Tick += (s, e) => GameTick();
+        _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        _timer.Tick += (_, _) => GameTick();
         _timer.Start();
     }
 
@@ -40,91 +46,92 @@ public partial class MainWindow : Window
 
     private void UpdateUi()
     {
-        var state = _gameManager.GetGameState();
-
+        UpdateResourcesText(_gameState);
+        UpdateBuildingPanel(_gameState);
+        UpdateUpgradePanel(_gameState);
+        UpdateProductionPerSecond(_gameState);
+    }
+    
+    private void UpdateResourcesText(GameState state)
+    {
         FoodText.Text = $"Food: {state.GetResources(ResourceType.Food).ToString(CultureInfo.CurrentCulture)}";
         WoodText.Text =  $"Wood: {state.GetResources(ResourceType.Wood).ToString(CultureInfo.CurrentCulture)}";
         StoneText.Text = $"Stone: {state.GetResources(ResourceType.Stone).ToString(CultureInfo.CurrentCulture)}";
         GoldText.Text =  $"Gold: {state.GetResources(ResourceType.Gold).ToString(CultureInfo.CurrentCulture)}";
         PopulationText.Text = $"Population: {state.GetResources(ResourceType.Population).ToString(CultureInfo.CurrentCulture)}";
-        
-        AddBuildingPanel(state);
-        AddUpgradePanel(state);
     }
 
-    private void AddBuildingPanel(GameState state)
+    private void InitBuildingPanel(GameState state)
     {
         BuildingPanel.Children.Clear();
+        _buildingsButtons.Clear();
         foreach (var building in state.Buildings)
         {
-            string GetCostText()
-            {
-                var costs = building.Definition.Costs
-                    .ToDictionary(
-                        kvp => kvp.Key,
-                        kvp => Math.Round(kvp.Value * Math.Pow(building.Definition.CostMultiplier, building.Count), 0, MidpointRounding.AwayFromZero)
-                    );
-                return string.Join(", ", costs.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
-            }
-            
+            var localBuilding = building;
+
             var btn = new Button
             {
-                Content = $"{building.Definition.Name} ({building.Count}) - Costs : {GetCostText()}",
-                FontSize = 16,
-                Padding = new Thickness(10, 5, 10, 5),
-                Margin = new Thickness(5),
-                Background = Brushes.DarkSlateGray,
-                Foreground = Brushes.White,
-                BorderBrush = Brushes.Black,
-                BorderThickness = new Thickness(2),
-                HorizontalContentAlignment = HorizontalAlignment.Left,
-                VerticalContentAlignment = VerticalAlignment.Center
+                Content = $"{building.Definition.Name} ({building.Count}) - Costs : {building.GetCostText()}",
+                Style = (Style)FindResource("BuildingButtonStyle"),
             };
-            
-            btn.Click += (s, e) =>
+
+            btn.Click += (_, _) =>
             {
-                _gameManager.BuyBuilding(building.Definition.Type);
+                _gameManager.BuyBuilding(localBuilding.Definition.Type);
                 UpdateUi();
             };
             BuildingPanel.Children.Add(btn);
+            _buildingsButtons.Add(building, btn);
+        }
+        UpdateBuildingPanel(state);
+    }
+
+    private void UpdateBuildingPanel(GameState state)
+    {
+        foreach (var building in state.Buildings)
+        {
+            if (_buildingsButtons.TryGetValue(building, out var btn))
+            {
+                btn.Content = $"{building.Definition.Name} ({building.Count}) - Costs : {building.GetCostText()}";
+            }
         }
     }
 
-    private void AddUpgradePanel(GameState state)
+    private void InitUpgradePanel(GameState state)
     {
         UpgradesPanel.Children.Clear();
+        _upgradeButtons.Clear();
 
         foreach (var upgrade in state.Upgrades.Where(u => !u.IsPurchased))
         {
+            var localUpgrade = upgrade;
+            
             var btn = new Button
             {
-                Content = $"{upgrade.Definition.Name} - Costs : {GetCostText()}",
-                FontSize = 16,
-                Padding = new Thickness(10, 5, 10, 5),
-                Margin = new Thickness(5),
-                Background = Brushes.DarkGoldenrod,
-                Foreground = Brushes.White,
-                BorderBrush = Brushes.Black,
-                BorderThickness = new Thickness(2),
-                HorizontalContentAlignment = HorizontalAlignment.Left,
-                VerticalContentAlignment = VerticalAlignment.Center,
+                Content = $"{upgrade.Definition.Name} - Costs : {localUpgrade.GetCostText()}",
+                Style = (Style)FindResource("UpgradeButtonStyle"),
             };
 
-            btn.Click += (s, e) =>
+            btn.Click += (_, _) =>
             {
-                _gameManager.BuyUpgrade(state, upgrade.Definition.Id);
+                _gameManager.BuyUpgrade(state, localUpgrade.Definition.Id);
                 UpdateUi();
             };
 
             UpgradesPanel.Children.Add(btn);
-            continue;
+            _upgradeButtons.Add(upgrade, btn);
+        }
+        UpdateUpgradePanel(state);
+    }
 
-            string GetCostText()
-            {
-                return string.Join(", ",
-                    upgrade.Definition.Costs.Select(kvp => $"{kvp.Key}: {kvp.Value}")
-                );
-            }
+    private void UpdateUpgradePanel(GameState state)
+    {
+        foreach (var upgrade in state.Upgrades)
+        {
+            if (!_upgradeButtons.TryGetValue(upgrade, out var btn)) continue;
+            
+            btn.Content = $"{upgrade.Definition.Name} - Costs: {upgrade.GetCostText()}";
+            btn.IsEnabled = !upgrade.IsPurchased;
         }
     }
     
@@ -136,8 +143,6 @@ public partial class MainWindow : Window
         
         _gameManager.GatherResource(ResourceType.Food, 1);
         UpdateUi();
-        
-        await Task.Delay(1000);
 
         button?.IsEnabled = true;
     }
@@ -150,18 +155,35 @@ public partial class MainWindow : Window
         _gameManager.GatherResource(ResourceType.Wood, 1);
         UpdateUi();
         
-        await Task.Delay(1000);
 
         button?.IsEnabled = true;
     }
-    /*private void CollectStone_Click(object sender, RoutedEventArgs e)
+    
+    private void UpdateProductionPerSecond(GameState state)
     {
-        _gameManager.GatherResource(ResourceType.Stone, 1);
-        UpdateUi();
+        var productions = new List<string>();
+        
+        foreach (var building in state.Buildings)
+        {
+            if (building.Count == 0) continue;
+            
+            var bonus = 1.0;
+
+            foreach (var upgrade in state.Upgrades)
+            {
+                if (upgrade.IsPurchased && upgrade.Definition.TargetBuilding == building.Definition.Type)
+                    bonus*= upgrade.Definition.ProductionMultiplier;
+            }
+            
+            foreach (var (resource, value) in building.Definition.Production)
+            {
+                if (value == 0) continue;
+                
+                var perSec = value * building.Count * bonus;
+                productions.Add($"{resource}: {perSec:F1} / sec");
+            }
+        }
+        
+        ProductionPanel.ItemsSource = productions;
     }
-    private void CollectGold_Click(object sender, RoutedEventArgs e)
-    {
-        _gameManager.GatherResource(ResourceType.Gold, 1);
-        UpdateUi();
-    }*/
 }
