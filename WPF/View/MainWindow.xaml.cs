@@ -1,8 +1,6 @@
 ﻿using System.Globalization;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Threading;
 using App.Managers;
 using Core.Enums;
@@ -14,7 +12,7 @@ namespace WPF.View;
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow
 {
     private readonly GameManager _gameManager;
     private readonly DispatcherTimer _timer;
@@ -156,6 +154,7 @@ public partial class MainWindow : Window
 
         button?.IsEnabled = true;
     }
+    
     private void CollectWood_Click(object sender, RoutedEventArgs e)
     {
         var button = sender as Button;
