@@ -57,7 +57,7 @@ public static class BuildingDefinitions
         
         new BuildingDefinition
         {
-            Name = "Quarry",
+            Name = "Market",
             Type = BuildingType.Market,
             Costs = new Dictionary<ResourceType, double>
             {

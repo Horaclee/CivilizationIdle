@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -6,6 +7,7 @@ using System.Windows.Threading;
 using App.Managers;
 using Core.Enums;
 using Core.Models;
+using Core.Systems;
 
 namespace WPF.View;
 
@@ -19,6 +21,7 @@ public partial class MainWindow : Window
     private readonly GameState _gameState;
     private readonly Dictionary<Building, Button> _buildingsButtons = new();
     private readonly Dictionary<Upgrade, Button> _upgradeButtons = new();
+    private readonly EconomySystem _economySystem = new EconomySystem();
     
     public MainWindow()
     {
@@ -71,7 +74,7 @@ public partial class MainWindow : Window
 
             var btn = new Button
             {
-                Content = $"{building.Definition.Name} ({building.Count}) - Costs : {building.GetCostText()}",
+                Content = $"{building.Definition.Name} ({building.Count}) - Costs : {GetBuildingCostText(building)}",
                 Style = (Style)FindResource("BuildingButtonStyle"),
             };
 
@@ -92,7 +95,7 @@ public partial class MainWindow : Window
         {
             if (_buildingsButtons.TryGetValue(building, out var btn))
             {
-                btn.Content = $"{building.Definition.Name} ({building.Count}) - Costs : {building.GetCostText()}";
+                btn.Content = $"{building.Definition.Name} ({building.Count}) - Costs : {GetBuildingCostText(building)}";
             }
         }
     }
@@ -134,8 +137,15 @@ public partial class MainWindow : Window
             btn.IsEnabled = !upgrade.IsPurchased;
         }
     }
+
+    private string GetBuildingCostText(Building building)
+    {
+        var costs = _economySystem.CalculateBuildingCost(building);
+        return string.Join(", ", costs.Select(kvp =>
+            $"{kvp.Key}: {kvp.Value.ToString(CultureInfo.CurrentCulture)}"));
+    }
     
-    private async void CollectFood_Click(object sender, RoutedEventArgs e)
+    private void CollectFood_Click(object sender, RoutedEventArgs e)
     {
         var button = sender as Button;
 
@@ -146,7 +156,7 @@ public partial class MainWindow : Window
 
         button?.IsEnabled = true;
     }
-    private async void CollectWood_Click(object sender, RoutedEventArgs e)
+    private void CollectWood_Click(object sender, RoutedEventArgs e)
     {
         var button = sender as Button;
 

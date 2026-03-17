@@ -8,7 +8,6 @@ namespace App.Managers;
 public class BuildingManager
 {
     private readonly EconomySystem _economySystem = new EconomySystem();
-    private ResourceManager _resourceManager = new ResourceManager();
 
     public bool BuyBuilding(GameState state, BuildingType type)
     {
@@ -52,8 +51,4 @@ public class BuildingManager
             });
         }
     }
-    
-    public Building? GetBuilding(GameState state, BuildingType type) => state.Buildings.FirstOrDefault(b => b.Definition.Type == type);
-    public List<Building> GetAllBuildings(GameState state) => state.Buildings;
-    public void UpdateBuildings(GameState state){}
 }
