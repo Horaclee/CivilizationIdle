@@ -11,7 +11,7 @@ public class GameState
 
     public CivilizationStage Stage { get; set; }
 
-    private DateTime LastSaved { get; set; }
+    public DateTime LastSavedUtc { get; set; }
 
     public GameState()
     {
@@ -22,11 +22,11 @@ public class GameState
     {
         Resources = new Dictionary<ResourceType, double>()
         {
-            { ResourceType.Food, 100 },
-            { ResourceType.Wood, 100 },
-            { ResourceType.Stone, 100 },
-            { ResourceType.Gold, 100 },
-            { ResourceType.Population, 100 },
+            { ResourceType.Food, 0 },
+            { ResourceType.Wood, 0 },
+            { ResourceType.Stone, 0 },
+            { ResourceType.Gold, 0 },
+            { ResourceType.Population, 0 },
         };
 
         Stage = CivilizationStage.Tribe;
@@ -35,7 +35,7 @@ public class GameState
         
         Upgrades = new List<Upgrade>();
         
-        LastSaved = DateTime.Now;
+        LastSavedUtc = DateTime.UtcNow;
     }
 
     public void Reset()
@@ -49,6 +49,6 @@ public class GameState
     
     public void UpdateLastSaved()
     {
-        LastSaved = DateTime.Now;
+        LastSavedUtc = DateTime.UtcNow;
     }
 }

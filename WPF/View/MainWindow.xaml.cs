@@ -16,7 +16,8 @@ public partial class MainWindow
 {
     private readonly GameManager _gameManager;
     private readonly DispatcherTimer _timer;
-    private readonly GameState _gameState;
+    private readonly DispatcherTimer _autoSaveTimer;
+    private GameState _gameState;
     private readonly Dictionary<Building, Button> _buildingsButtons = new();
     private readonly Dictionary<Upgrade, Button> _upgradeButtons = new();
     private readonly EconomySystem _economySystem = new EconomySystem();
@@ -26,17 +27,26 @@ public partial class MainWindow
         InitializeComponent();
         
         _gameManager = new GameManager();
-        _gameState = _gameManager.GetGameState();
-        _gameManager.StartGame();
-        
-        InitBuildingPanel(_gameState);
-        InitUpgradePanel(_gameState);
+        _gameManager.StateChanged += OnStateChanged;
+        _gameManager.LoadGame();
 
-        UpdateUi();
+        Closing += (_, _) => _gameManager.SaveGame();
         
         _timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         _timer.Tick += (_, _) => GameTick();
         _timer.Start();
+
+        _autoSaveTimer = new DispatcherTimer { Interval = TimeSpan.FromMinutes(1) };
+        _autoSaveTimer.Tick += (_, _) => _gameManager.SaveGame();
+        _autoSaveTimer.Start();
+    }
+
+    private void OnStateChanged(GameState state)
+    {
+        _gameState = state;
+        InitBuildingPanel(_gameState);
+        InitUpgradePanel(_gameState);
+        UpdateUi();
     }
 
     private void GameTick()
@@ -103,7 +113,7 @@ public partial class MainWindow
         UpgradesPanel.Children.Clear();
         _upgradeButtons.Clear();
 
-        foreach (var upgrade in state.Upgrades.Where(u => !u.IsPurchased))
+        foreach (var upgrade in state.Upgrades)
         {
             var localUpgrade = upgrade;
             
@@ -166,6 +176,16 @@ public partial class MainWindow
         
 
         button?.IsEnabled = true;
+    }
+
+    private void Save_Click(object sender, RoutedEventArgs e)
+    {
+        _gameManager.SaveGame();
+    }
+
+    private void Load_Click(object sender, RoutedEventArgs e)
+    {
+        _gameManager.LoadGame();
     }
     
     private void UpdateProductionPerSecond(GameState state)

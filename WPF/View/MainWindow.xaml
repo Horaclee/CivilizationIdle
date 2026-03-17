@@ -199,7 +199,13 @@
         </Grid>
         
         <Border Grid.Column="1" BorderBrush="Aquamarine" BorderThickness="3" Margin="2" CornerRadius="4">
-            <StackPanel Margin="10,0,0,0">
+            <Grid Margin="10,0,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0">
                 <TextBlock Text="Production / sec" FontSize="22" FontWeight="Bold" Margin="0,0,0,10"/>
                 <ItemsControl x:Name="ProductionPanel">
                     <ItemsControl.ItemTemplate>
@@ -208,7 +214,17 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+                    <Button Content="Save" Click="Save_Click" Margin="0,0,10,0"
+                            Background="Teal" Tag="DarkCyan"
+                            Style="{StaticResource CollectButtonStyle}"/>
+                    <Button Content="Load" Click="Load_Click"
+                            Background="SteelBlue" Tag="CornflowerBlue"
+                            Style="{StaticResource CollectButtonStyle}"/>
+                </StackPanel>
+            </Grid>
         </Border>
         
     </Grid>
