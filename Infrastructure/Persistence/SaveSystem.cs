@@ -1,8 +1,9 @@
-﻿using System.Text.Json;
+﻿﻿using System.Text.Json;
 using Core.Definitions;
 using Core.Models;
 using System;
 using System.IO;
+using Core.Enums;
 using Infrastructure.Config;
 
 namespace Infrastructure.Persistence;
@@ -52,13 +53,13 @@ public class SaveSystem
         var saveData = JsonSerializer.Deserialize<SaveData>(json);
 
         var state = new GameState();
-
+        
         state.Resources = saveData.Resources;
 
-        foreach (var b in saveData.Buildings)
+        foreach (var b in saveData.Buildings ?? [])
         {
             var def = BuildingDefinitions.All.First(x => x.Type == b.Type);
-            
+
             state.Buildings.Add(new Building
             {
                 Definition = def,
@@ -66,7 +67,7 @@ public class SaveSystem
             });
         }
 
-        foreach (var u in saveData.Upgrades)
+        foreach (var u in saveData.Upgrades ?? [])
         {
             var upgrade = UpgradeDefinitions.All.First(x => x.Id == u.Id);
             state.Upgrades.Add(new Upgrade
@@ -75,7 +76,7 @@ public class SaveSystem
                 IsPurchased = u.IsPurchased
             });
         }
-        
+
         return state;
     }
 }

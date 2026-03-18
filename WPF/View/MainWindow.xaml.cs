@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+﻿﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -23,12 +23,20 @@ public partial class MainWindow
     private readonly EconomySystem _economySystem = new EconomySystem();
     
     public MainWindow()
+        : this(loadGame: true)
+    {
+    }
+
+    public MainWindow(bool loadGame)
     {
         InitializeComponent();
         
         _gameManager = new GameManager();
         _gameManager.StateChanged += OnStateChanged;
-        _gameManager.LoadGame();
+        if (loadGame)
+            _gameManager.LoadGame();
+        else
+            _gameManager.StartGame();
 
         Closing += (_, _) => _gameManager.SaveGame();
         
@@ -65,11 +73,11 @@ public partial class MainWindow
     
     private void UpdateResourcesText(GameState state)
     {
-        FoodText.Text = $"Food: {state.GetResources(ResourceType.Food).ToString(CultureInfo.CurrentCulture)}";
-        WoodText.Text =  $"Wood: {state.GetResources(ResourceType.Wood).ToString(CultureInfo.CurrentCulture)}";
-        StoneText.Text = $"Stone: {state.GetResources(ResourceType.Stone).ToString(CultureInfo.CurrentCulture)}";
-        GoldText.Text =  $"Gold: {state.GetResources(ResourceType.Gold).ToString(CultureInfo.CurrentCulture)}";
-        PopulationText.Text = $"Population: {state.GetResources(ResourceType.Population).ToString(CultureInfo.CurrentCulture)}";
+        FoodText.Text = $"Food: {FormatCompact(state.GetResources(ResourceType.Food))}";
+        WoodText.Text =  $"Wood: {FormatCompact(state.GetResources(ResourceType.Wood))}";
+        StoneText.Text = $"Stone: {FormatCompact(state.GetResources(ResourceType.Stone))}";
+        GoldText.Text =  $"Gold: {FormatCompact(state.GetResources(ResourceType.Gold))}";
+        PopulationText.Text = $"Population: {FormatCompact(state.GetResources(ResourceType.Population))}";
     }
 
     private void InitBuildingPanel(GameState state)
@@ -82,7 +90,15 @@ public partial class MainWindow
 
             var btn = new Button
             {
-                Content = $"{building.Definition.Name} ({building.Count}) - Costs : {GetBuildingCostText(building)}",
+                Content = new StackPanel
+                {
+                    Orientation = Orientation.Vertical,
+                    Children =
+                    {
+                        new TextBlock { Text = $"{building.Definition.Name} ({building.Count})" },
+                        new TextBlock { Text = $"Costs: {GetBuildingCostText(building)}", Opacity = 0.8 }
+                    }
+                },
                 Style = (Style)FindResource("BuildingButtonStyle"),
             };
 
@@ -103,7 +119,13 @@ public partial class MainWindow
         {
             if (_buildingsButtons.TryGetValue(building, out var btn))
             {
-                btn.Content = $"{building.Definition.Name} ({building.Count}) - Costs : {GetBuildingCostText(building)}";
+                if (btn.Content is StackPanel panel && panel.Children.Count >= 2)
+                {
+                    if (panel.Children[0] is TextBlock nameText)
+                        nameText.Text = $"{building.Definition.Name} ({building.Count})";
+                    if (panel.Children[1] is TextBlock costText)
+                        costText.Text = $"Costs: {GetBuildingCostText(building)}";
+                }
             }
         }
     }
@@ -119,7 +141,15 @@ public partial class MainWindow
             
             var btn = new Button
             {
-                Content = $"{upgrade.Definition.Name} - Costs : {localUpgrade.GetCostText()}",
+                Content = new StackPanel
+                {
+                    Orientation = Orientation.Vertical,
+                    Children =
+                    {
+                        new TextBlock { Text = upgrade.Definition.Name },
+                        new TextBlock { Text = $"Costs: {localUpgrade.GetCostText()}", Opacity = 0.8 }
+                    }
+                },
                 Style = (Style)FindResource("UpgradeButtonStyle"),
             };
 
@@ -141,7 +171,13 @@ public partial class MainWindow
         {
             if (!_upgradeButtons.TryGetValue(upgrade, out var btn)) continue;
             
-            btn.Content = $"{upgrade.Definition.Name} - Costs: {upgrade.GetCostText()}";
+            if (btn.Content is StackPanel panel && panel.Children.Count >= 2)
+            {
+                if (panel.Children[0] is TextBlock nameText)
+                    nameText.Text = upgrade.Definition.Name;
+                if (panel.Children[1] is TextBlock costText)
+                    costText.Text = $"Costs: {upgrade.GetCostText()}";
+            }
             btn.IsEnabled = !upgrade.IsPurchased;
         }
     }
@@ -150,7 +186,29 @@ public partial class MainWindow
     {
         var costs = _economySystem.CalculateBuildingCost(building);
         return string.Join(", ", costs.Select(kvp =>
-            $"{kvp.Key}: {kvp.Value.ToString(CultureInfo.CurrentCulture)}"));
+            $"{kvp.Key}: {FormatCompact(kvp.Value)}"));
+    }
+
+    private static string FormatCompact(double value)
+    {
+        var abs = Math.Abs(value);
+        var culture = CultureInfo.CurrentCulture;
+
+        if (abs < 1000)
+            return value.ToString("N0", culture);
+
+        string[] suffixes = ["K", "M", "B", "T"];
+        var divisor = 1000.0;
+        var suffixIndex = -1;
+
+        while (abs >= divisor && suffixIndex < suffixes.Length - 1)
+        {
+            divisor *= 1000.0;
+            suffixIndex++;
+        }
+
+        var scaled = value / (divisor / 1000.0);
+        return $"{scaled.ToString("0.#", culture)}{suffixes[suffixIndex]}";
     }
     
     private void CollectFood_Click(object sender, RoutedEventArgs e)
@@ -208,7 +266,7 @@ public partial class MainWindow
             {
                 if (value == 0) continue;
                 
-                var perSec = value * building.Count * bonus;
+                var perSec = value * building.Count * bonus * _gameManager.GetCurrentMultiplier();
                 productions.Add($"{resource}: {perSec:F1} / sec");
             }
         }

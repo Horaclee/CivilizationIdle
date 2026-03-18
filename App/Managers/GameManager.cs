@@ -14,9 +14,10 @@ public class GameManager
     private readonly ResourceManager _resourceManager;
     private readonly BuildingManager _buildingManager;
     private readonly UpgradeManager _upgradeManager;
+    private readonly CivilizationManager _civilizationManager;
     private readonly SaveSystem _saveSystem;
 
-    public GameManager(SaveSystem? saveSystem = null, ResourceManager? resourceManager = null,
+    public GameManager(CivilizationManager? civilizationManager = null, SaveSystem? saveSystem = null, ResourceManager? resourceManager = null,
         BuildingManager? buildingManager = null, 
         ProductionSystem? productionSystem = null,
         UpgradeManager? upgradeManager = null)
@@ -24,6 +25,7 @@ public class GameManager
         State = new GameState();
         
         _saveSystem = saveSystem ?? new SaveSystem();
+        _civilizationManager = civilizationManager ?? new CivilizationManager();
         _productionSystem = productionSystem ?? new ProductionSystem();
         _resourceManager = resourceManager ?? new ResourceManager();
         _buildingManager = buildingManager ?? new BuildingManager();
@@ -39,10 +41,12 @@ public class GameManager
     } 
         
     public GameState GetGameState() => State;
+    public double GetCurrentMultiplier() => _civilizationManager.GetCurrentMultiplier(State);
 
     public void UpdateGame()
     {
-        _productionSystem.ApplyProduction(State);
+        _civilizationManager.UpdateCivilization(State);
+        _productionSystem.ApplyProduction(State, _civilizationManager.GetCurrentMultiplier(State));
     }
     
     public void SaveGame()

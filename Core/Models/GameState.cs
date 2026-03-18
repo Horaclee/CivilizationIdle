@@ -1,4 +1,5 @@
-﻿using Core.Enums;
+﻿using Core.Definitions;
+using Core.Enums;
 
 namespace Core.Models;
 
@@ -8,7 +9,6 @@ public class GameState
 
     public List<Building> Buildings { get; set; }
     public List<Upgrade> Upgrades { get; set; }
-
     public CivilizationStage Stage { get; set; }
 
     public DateTime LastSavedUtc { get; set; }
@@ -32,9 +32,8 @@ public class GameState
         Stage = CivilizationStage.Tribe;
 
         Buildings = new List<Building>();
-        
         Upgrades = new List<Upgrade>();
-        
+
         LastSavedUtc = DateTime.UtcNow;
     }
 

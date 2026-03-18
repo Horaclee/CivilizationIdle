@@ -5,7 +5,7 @@ namespace Core.Systems;
 
 public class ProductionSystem
 {
-    public void ApplyProduction(GameState state)
+    public void ApplyProduction(GameState state, double stageMultiplier)
     {
         var bonuses = CalculateProductionBonuses(state);
         
@@ -19,7 +19,7 @@ public class ProductionSystem
             {
                 if (value == 0) continue;
                 
-                var amount = value * building.Count * bonus;
+                var amount = value * building.Count * bonus * stageMultiplier;
                 var current = state.GetResources(resource);
                 
                 state.SetResources(resource, current + amount);

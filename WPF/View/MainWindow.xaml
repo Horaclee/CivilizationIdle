@@ -2,6 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:WPF"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="CivilizationIdle" Height="450" Width="800" WindowState="Maximized" Background="{DynamicResource AppBackground}">
@@ -40,9 +41,12 @@
             <SolidColorBrush x:Key="HoverNeutralBrush" Color="#2A3446"/>
             <SolidColorBrush x:Key="HoverGoldBrush" Color="#E0B562"/>
 
+            <local:FontScaleConverter x:Key="FontScaleConverter"/>
+
             <Style TargetType="TextBlock">
                 <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
                 <Setter Property="FontFamily" Value="Segoe UI Variable Text"/>
+                <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=14}"/>
             </Style>
 
             <Style x:Key="CardStyle" TargetType="Border">
@@ -59,7 +63,7 @@
             </Style>
 
             <Style x:Key="CollectButtonStyle" TargetType="Button">
-                <Setter Property="FontSize" Value="15"/>
+                <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=15}"/>
                 <Setter Property="FontFamily" Value="Segoe UI Variable Text"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
                 <Setter Property="Padding" Value="14,10"/>
@@ -99,7 +103,7 @@
             </Style>
 
             <Style x:Key="BuildingButtonStyle" TargetType="Button" BasedOn="{StaticResource CollectButtonStyle}">
-                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=14}"/>
                 <Setter Property="Margin" Value="0,6,0,0"/>
                 <Setter Property="Background" Value="{StaticResource CardBackgroundAlt}"/>
                 <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
@@ -108,7 +112,7 @@
             </Style>
 
             <Style x:Key="UpgradeButtonStyle" TargetType="Button" BasedOn="{StaticResource CollectButtonStyle}">
-                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontSize" Value="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=14}"/>
                 <Setter Property="Margin" Value="0,6,0,0"/>
                 <Setter Property="Background" Value="{StaticResource GoldBrush}"/>
                 <Setter Property="Foreground" Value="#1A1610"/>
@@ -143,11 +147,16 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="Food: " x:Name="FoodText" Grid.Column="0" FontSize="18"/>
-                    <TextBlock Text="Wood: " x:Name="WoodText" Grid.Column="1" FontSize="18"/>
-                    <TextBlock Text="Stone: " x:Name="StoneText" Grid.Column="2" FontSize="18"/>
-                    <TextBlock Text="Gold: " x:Name="GoldText" Grid.Column="3" FontSize="18"/>
-                    <TextBlock Text="Population: " x:Name="PopulationText" Grid.Column="4" FontSize="18"/>
+                    <TextBlock Text="Food: " x:Name="FoodText" Grid.Column="0"
+                               FontSize="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=18}"/>
+                    <TextBlock Text="Wood: " x:Name="WoodText" Grid.Column="1"
+                               FontSize="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=18}"/>
+                    <TextBlock Text="Stone: " x:Name="StoneText" Grid.Column="2"
+                               FontSize="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=18}"/>
+                    <TextBlock Text="Gold: " x:Name="GoldText" Grid.Column="3"
+                               FontSize="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=18}"/>
+                    <TextBlock Text="Population: " x:Name="PopulationText" Grid.Column="4"
+                               FontSize="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=18}"/>
                 </Grid>
             </Border>
             
@@ -175,8 +184,12 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <WrapPanel x:Name="BuildingPanel" Grid.Column="0" Orientation="Vertical" Margin="0,0,12,0"/>
-                    <WrapPanel x:Name="UpgradesPanel" Grid.Column="1" Orientation="Vertical"/>
+                    <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" Margin="0,0,12,0">
+                        <WrapPanel x:Name="BuildingPanel" Orientation="Vertical"/>
+                    </ScrollViewer>
+                    <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                        <WrapPanel x:Name="UpgradesPanel" Orientation="Vertical"/>
+                    </ScrollViewer>
                 </Grid>
             </Border>
         </Grid>
@@ -189,11 +202,15 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0">
-                <TextBlock Text="Production / sec" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                <TextBlock Text="Production / sec"
+                           FontSize="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=20}"
+                           FontWeight="SemiBold" Margin="0,0,0,10"/>
                 <ItemsControl x:Name="ProductionPanel">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding}" FontSize="16" Margin="0,4,0,4" Foreground="{StaticResource TextMuted}"/>
+                            <TextBlock Text="{Binding}"
+                                       FontSize="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=16}"
+                                       Margin="0,4,0,4" Foreground="{StaticResource TextMuted}"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
