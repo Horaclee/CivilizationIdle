@@ -46,6 +46,7 @@ public class GameManager
     public void UpdateGame()
     {
         _civilizationManager.UpdateCivilization(State);
+        BuildingManager.SyncBuildingsForStage(State);
         _productionSystem.ApplyProduction(State, _civilizationManager.GetCurrentMultiplier(State));
     }
     
@@ -62,6 +63,7 @@ public class GameManager
             StartGame();
             return;
         }
+        BuildingManager.SyncBuildingsForStage(State);
         StateChanged?.Invoke(State);
     }
 

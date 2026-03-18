@@ -6,7 +6,6 @@ namespace Infrastructure.Persistence;
 
 public class SaveData
 {
-    public int Version { get; set; } = 1;
     public DateTime LastSavedUtc { get; set; }
 
     public Dictionary<ResourceType, double> Resources { get; set; } = new ();

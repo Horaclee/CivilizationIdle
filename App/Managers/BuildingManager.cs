@@ -16,6 +16,7 @@ public class BuildingManager
         {
             var def = BuildingDefinitions.All.FirstOrDefault(b => b.Type == type);
             if (def == null) return false;
+            if (def.UnlockStage > state.Stage) return false;
             
             building = new Building { Definition = def, Count = 0 };
             state.Buildings.Add(building);
@@ -36,7 +37,19 @@ public class BuildingManager
         
         return true;
     }
-    
+
+    public static void UnlockBuildingForStage(GameState state)
+    {
+        var unlocked = BuildingDefinitions.All
+            .Where(def => def.UnlockStage <= state.Stage)
+            .ToList();
+
+        foreach (var def in unlocked)
+        {
+            if (state.Buildings.Any(b => b.Definition.Type == def.Type)) continue;
+            state.Buildings.Add(new Building { Definition = def, Count = 0 });
+        }
+    }
     
     public static void InitBuildings(GameState state)
     {
@@ -44,11 +57,27 @@ public class BuildingManager
 
         foreach (var def in BuildingDefinitions.All)
         {
+            if (def.UnlockStage > state.Stage) continue;
             state.Buildings.Add(new Building
             {
                 Definition = def,
                 Count = 0
             });
+        }
+    }
+
+    public static void SyncBuildingsForStage(GameState state)
+    {
+        var unlockedDefs = BuildingDefinitions.All
+            .Where(def => def.UnlockStage <= state.Stage)
+            .ToList();
+
+        state.Buildings.RemoveAll(b => b.Definition.UnlockStage > state.Stage);
+
+        foreach (var def in unlockedDefs)
+        {
+            if (state.Buildings.Any(b => b.Definition.Type == def.Type)) continue;
+            state.Buildings.Add(new Building { Definition = def, Count = 0 });
         }
     }
 }

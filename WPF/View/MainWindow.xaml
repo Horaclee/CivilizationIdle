@@ -202,9 +202,15 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0">
-                <TextBlock Text="Production / sec"
-                           FontSize="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=20}"
-                           FontWeight="SemiBold" Margin="0,0,0,10"/>
+                    <TextBlock Text="Village" x:Name="Civilization"
+                               FontSize="{Binding RelativeSource={RelativeSource AncestorType=Window}, 
+                               Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=20}"
+                               FontWeight="Bold" Margin="0,0,0,10"/>
+                    
+                    <TextBlock Text="Production / sec"
+                               FontSize="{Binding RelativeSource={RelativeSource AncestorType=Window}, 
+                               Path=ActualWidth, Converter={StaticResource FontScaleConverter}, ConverterParameter=20}"
+                               FontWeight="SemiBold" Margin="0,0,0,10"/>
                 <ItemsControl x:Name="ProductionPanel">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -214,15 +220,6 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                </StackPanel>
-
-                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
-                    <Button Content="Save" Click="Save_Click" Margin="0,0,10,0"
-                            Background="{StaticResource AccentBrush}" Tag="{StaticResource AccentStrongBrush}"
-                            Style="{StaticResource CollectButtonStyle}"/>
-                    <Button Content="Load" Click="Load_Click"
-                            Background="{StaticResource InfoBrush}" Tag="#6BA6FF"
-                            Style="{StaticResource CollectButtonStyle}"/>
                 </StackPanel>
             </Grid>
         </Border>

@@ -11,6 +11,7 @@ public static class BuildingDefinitions
         {
             Name = "Farm",
             Type = BuildingType.Farm,
+            UnlockStage = CivilizationStage.Tribe,
             Costs = new Dictionary<ResourceType, double>
             {
                 {ResourceType.Food, 10},
@@ -27,6 +28,7 @@ public static class BuildingDefinitions
         {
             Name = "Lumber Mill",
             Type = BuildingType.LumberMill,
+            UnlockStage = CivilizationStage.Tribe,
             Costs = new Dictionary<ResourceType, double>
             {
                 {ResourceType.Food, 20},
@@ -43,6 +45,7 @@ public static class BuildingDefinitions
         {
             Name = "Quarry",
             Type = BuildingType.Quarry,
+            UnlockStage = CivilizationStage.Village,
             Costs = new Dictionary<ResourceType, double>
             {
                 {ResourceType.Food, 50}, 
@@ -59,6 +62,7 @@ public static class BuildingDefinitions
         {
             Name = "Market",
             Type = BuildingType.Market,
+            UnlockStage = CivilizationStage.Village,
             Costs = new Dictionary<ResourceType, double>
             {
                 {ResourceType.Food, 150}, 
@@ -76,6 +80,7 @@ public static class BuildingDefinitions
         {
             Name = "House",
             Type = BuildingType.House,
+            UnlockStage = CivilizationStage.Town,
             Costs = new Dictionary<ResourceType, double>
             {
                 {ResourceType.Food, 100}, 

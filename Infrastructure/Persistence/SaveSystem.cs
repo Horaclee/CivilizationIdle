@@ -27,6 +27,7 @@ public class SaveSystem
         EnsureSaveDirectoryExists();
         var saveData = new SaveData
         {
+            LastSavedUtc = state.LastSavedUtc,
             Resources = state.Resources,
             Buildings = state.Buildings.Select(b => new SaveData.BuildingSave
             {

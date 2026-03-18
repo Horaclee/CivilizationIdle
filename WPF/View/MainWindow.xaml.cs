@@ -1,4 +1,4 @@
-﻿﻿using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -69,6 +69,7 @@ public partial class MainWindow
         UpdateBuildingPanel(_gameState);
         UpdateUpgradePanel(_gameState);
         UpdateProductionPerSecond(_gameState);
+        UpdateCivilizationText(_gameState);
     }
     
     private void UpdateResourcesText(GameState state)
@@ -117,15 +118,37 @@ public partial class MainWindow
     {
         foreach (var building in state.Buildings)
         {
-            if (_buildingsButtons.TryGetValue(building, out var btn))
+            if (!_buildingsButtons.TryGetValue(building, out var btn))
             {
-                if (btn.Content is StackPanel panel && panel.Children.Count >= 2)
+                var localBuilding = building;
+                btn = new Button
                 {
-                    if (panel.Children[0] is TextBlock nameText)
-                        nameText.Text = $"{building.Definition.Name} ({building.Count})";
-                    if (panel.Children[1] is TextBlock costText)
-                        costText.Text = $"Costs: {GetBuildingCostText(building)}";
-                }
+                    Content = new StackPanel
+                    {
+                        Orientation = Orientation.Vertical,
+                        Children =
+                        {
+                            new TextBlock { Text = $"{building.Definition.Name} ({building.Count})" },
+                            new TextBlock { Text = $"Costs: {GetBuildingCostText(building)}" }
+                        }
+                    },
+                    Style = (Style)FindResource("BuildingButtonStyle"),
+                };
+                btn.Click += (_, _) =>
+                {
+                    _gameManager.BuyBuilding(localBuilding.Definition.Type);
+                    UpdateUi();
+                };
+                BuildingPanel.Children.Add(btn);
+                _buildingsButtons.Add(building, btn);
+            }
+
+            if (btn.Content is StackPanel panel && panel.Children.Count >= 2)
+            {
+                if (panel.Children[0] is TextBlock nameText)
+                    nameText.Text = $"{building.Definition.Name} ({building.Count})";
+                if (panel.Children[1] is TextBlock costText)
+                    costText.Text = $"Costs: {GetBuildingCostText(building)}";
             }
         }
     }
@@ -235,16 +258,6 @@ public partial class MainWindow
 
         button?.IsEnabled = true;
     }
-
-    private void Save_Click(object sender, RoutedEventArgs e)
-    {
-        _gameManager.SaveGame();
-    }
-
-    private void Load_Click(object sender, RoutedEventArgs e)
-    {
-        _gameManager.LoadGame();
-    }
     
     private void UpdateProductionPerSecond(GameState state)
     {
@@ -272,5 +285,10 @@ public partial class MainWindow
         }
         
         ProductionPanel.ItemsSource = productions;
+    }
+
+    public void UpdateCivilizationText(GameState state)
+    {
+        if (state.Stage.ToString() != Civilization.Text) Civilization.Text = state.Stage.ToString(); 
     }
 }

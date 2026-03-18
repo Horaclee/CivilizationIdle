@@ -28,11 +28,10 @@ public class GameState
             { ResourceType.Gold, 0 },
             { ResourceType.Population, 0 },
         };
-
-        Stage = CivilizationStage.Tribe;
-
+        
         Buildings = new List<Building>();
         Upgrades = new List<Upgrade>();
+        Stage = CivilizationStage.Tribe;
 
         LastSavedUtc = DateTime.UtcNow;
     }
