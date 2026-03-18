@@ -1,0 +1,23 @@
+<Window x:Class="WPF.View.StartWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="CivilizationIdle" Height="360" Width="520" WindowStartupLocation="CenterScreen"
+        Background="#0E1118">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="CivilizationIdle" FontSize="28" FontWeight="SemiBold" Foreground="#E7ECF5"/>
+        <TextBlock Grid.Row="1" Text="Choose an option to continue" Margin="0,8,0,20"
+                   Foreground="#9AA8BF" FontSize="14"/>
+
+        <StackPanel Grid.Row="2">
+            <Button Content="Start Game" Click="StartGame_Click" Margin="0,0,0,8" Height="44"/>
+            <Button Content="Load Game" Click="LoadGame_Click" Margin="0,0,0,8" Height="44"/>
+            <Button Content="Exit" Click="Exit_Click" Height="44"/>
+        </StackPanel>
+    </Grid>
+</Window>
